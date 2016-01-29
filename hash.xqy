@@ -1,3 +1,4 @@
+let $geohash-precision := 6
 let $input-poly := xdmp:get-request-body()
 
 let $vertices :=
@@ -6,8 +7,8 @@ return cts:point($item/lat, $item/lng)
 
 let $poly := cts:polygon($vertices)
 
-let $boundary-hashes := geo:geohash-encode($poly,6,("geohashes=boundary","box-percent=0"))
-let $interior-hashes := geo:geohash-encode($poly,6,("geohashes=interior","box-percent=0"))
+let $boundary-hashes := geo:geohash-encode($poly,$geohash-precision,("geohashes=boundary","box-percent=0"))
+let $interior-hashes := geo:geohash-encode($poly,$geohash-precision,("geohashes=interior","box-percent=0"))
 
 let $boundary-boxes :=
 for $hash in $boundary-hashes
