@@ -14,6 +14,11 @@ A demo app showing off MarkLogic's new geohash functions.
 * Input a polygon in WKT format and click "GeoHash" to see the polygon and its geohashes.
 * Click "Show/Hide Labels" to show or hide the labels for the geohash boxes (if there are lots of hashes, you might want to hide the labels since they can cause lots of lag).
 * Click "Show/Hide Geodesic Arcs" to show the edges of the polygon as geodesic arcs (as opposed to rhumb lines -- this display mode is more accurate for long arcs).
+* To view geohashes at other levels of precision, edit hash.xqy and change the line
+```xquery
+let $geohash-precision := 6
+```
+to the desired level of precision (1 through 11).
 
 ## Etc.
 
