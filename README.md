@@ -8,6 +8,15 @@ A demo app showing off MarkLogic's new geohash functions.
 3. Navigate to http://localhost:1337/geohash.html (substituting your hostname and port number).
 4. Draw some polygons, and see their geohashes! Refresh to clear.
 
+## Features
+
+* Draw a polygon on the map to see its geohashes.
+* Input a polygon in WKT format and click "GeoHash" to see the polygon and its geohashes.
+* Click "Show/Hide Labels" to show or hide the labels for the geohash boxes (if there are lots of hashes, you might want to hide the labels since they can cause lots of lag).
+* Click "Show/Hide Geodesic Arcs" to show the edges of the polygon as geodesic arcs (as opposed to rhumb lines -- this display mode is more accurate for long arcs).
+
 ## Etc.
+
+Feel free to fork or send a pull request!
 
 maplabel.js is copyright Google, Inc. (https://github.com/googlemaps/js-map-label) and is redistributed here under the terms of the Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0).
