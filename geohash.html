@@ -6,7 +6,8 @@
 <head>
     <title>GeoHash</title>
     <style type="text/css">
-        html, body, #map-canvas { height: 100%; margin: 0; padding: 0; }
+      html, body, div { margin: 0; padding: 0; }
+      html, body { height: 100%; }
     </style>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBWj1dLecWvRSiLz99rdI_P7AaDxoz0odw&libraries=drawing,visualization&v=3"></script>
     <script type="text/javascript" src="maplabel.js"></script>
@@ -56,23 +57,72 @@ function drawHashes(hashes) {
 }
 
 function drawHashesWkt(hashes) {
-  var features = theMap.data.addGeoJson(hashes.polygon);
-  var payload = [];
-  features[0].getGeometry().getAt(0).getArray().forEach(function(a) {
-    payload.push({ lat: a.lat(), lng: a.lng() });
-  });
-  drawGeodesics(payload);
+  if (hashes.feature) {
+    var features = theMap.data.addGeoJson(hashes.feature);
+    var latlngs = [];
+    features[0].getGeometry().getAt(0).getArray().forEach(function(a) {
+      latlngs.push({ lat: a.lat(), lng: a.lng() });
+    });
+    drawGeodesics(latlngs);
+  }
   drawBoxes(hashes.interior, '#00FF00');
   drawBoxes(hashes.boundary, '#FF0000');
   theMap.panTo(new google.maps.LatLng(hashes.center.lat, hashes.center.lng));
 }
 
-function fetchHashes(poly) {
-  var payload = [];
+function fetchHashesPoly(poly) {
+  var latlngs = [];
+  var str = "";
   poly.getPath().forEach(function(xy, i) {
-    payload[i] = {"lat": xy.lat(), "lng": xy.lng() };
+    latlngs[i] = {"lat": xy.lat(), "lng": xy.lng() };
+    str = str + xy.lat() + "," + xy.lng() + " ";
   });
-  drawGeodesics(payload);
+  drawGeodesics(latlngs);
+  fetchHashes(str);
+}
+
+function fetchHashesLine(line) {
+  var latlngs = [];
+  var str = "LINESTRING(";
+  line.getPath().forEach(function(xy, i) {
+    latlngs[i] = {"lat": xy.lat(), "lng": xy.lng() };
+    str = str + xy.lng() + " " + xy.lat() + ",";
+  });
+  str.replace(/,$/, "") + ")";
+  drawGeodesics(latlngs);
+  fetchHashes(str);
+}
+
+function fetchHashesCirc(circ) {
+  var radius = circ.getRadius();
+  var center = circ.getCenter();
+  var lat = center.lat();
+  var lng = center.lng();
+  var str = "@" + radius + " " + lat + "," + lng;
+  fetchHashes(str);
+}
+
+function fetchHashesRect(rect) {
+  var bounds = rect.getBounds();
+  var sw = bounds.getSouthWest();
+  var s = sw.lat();
+  var w = sw.lng();
+  var ne = bounds.getNorthEast();
+  var n = ne.lat();
+  var e = ne.lng();
+  var str = "[" + s + "," + w + "," + n + "," + e + "]";
+  fetchHashes(str);
+}
+
+function fetchHashesMark(mark) {
+  var pt = mark.getPosition();
+  var str = pt.lat() + "," + pt.lng();
+  fetchHashes(str);
+}
+
+function fetchHashes(str) {
+  var precision = $("#precision").val();
+  var payload = { precision: precision, region: str };
   $.ajax({
     type: "POST",
     url: "hash.xqy",
@@ -84,11 +134,13 @@ function fetchHashes(poly) {
 }
 
 function hashWKT(wkt) {
+  var precision = $("#precision").val();
+  var payload = { precision: precision, region: wkt }
   $.ajax({
     type: "POST",
     url: "hash.xqy",
-    data: wkt,
-    contentType: "text/plain",
+    data: JSON.stringify(payload),
+    contentType: "application/json",
     dataType: "json",
     success: drawHashesWkt
   });
@@ -104,10 +156,20 @@ function initialize() {
   var drawingManager = new google.maps.drawing.DrawingManager();
   drawingManager.setMap(theMap);
 
-  google.maps.event.addListener(drawingManager, 'polygoncomplete', fetchHashes);
+  google.maps.event.addListener(drawingManager, 'polygoncomplete', fetchHashesPoly);
+  google.maps.event.addListener(drawingManager, 'circlecomplete', fetchHashesCirc);
+  google.maps.event.addListener(drawingManager, 'polylinecomplete', fetchHashesLine);
+  google.maps.event.addListener(drawingManager, 'rectanglecomplete', fetchHashesRect);
+  google.maps.event.addListener(drawingManager, 'markercomplete', fetchHashesMark);
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
+
+function doResize() {
+  $("#map-canvas").css("height", $(window).height() - $("#text").height());
+}
+$(doResize);
+$(window).resize(doResize);
 
 function drawGeodesics(g) {
   for (var i = 0; i < g.length-1; ++i) {
@@ -213,6 +275,21 @@ function toggleLabels() {
     <button type="button" onclick="hashWKT(document.getElementById('wkt_textbox').value);">GeoHash</button>
     <button type="button" id="label_button"  onclick="toggleLabels();">Hide Labels</button>
     <button type="button" id="geod_button" onclick="toggleGeodesics();">Show Geodesic Arcs</button>
+    Precision:
+    <select id="precision">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6" selected>6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+      <option value="9">9</option>
+      <option value="10">10</option>
+      <option value="11">11</option>
+      <option value="12">12</option>
+    </select>
   </div>
   <div id="map-canvas"></div>
 </body>
