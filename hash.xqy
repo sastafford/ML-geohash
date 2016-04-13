@@ -3,7 +3,7 @@ declare option xdmp:coordinate-system "wgs84/double";
 
 let $input := xdmp:get-request-body()
 
-let $region := $input/region
+let $region := fn:string($input/region)
 let $geohash-precision := $input/precision
 
 let $boundary-hashes := geo:geohash-encode($region,$geohash-precision,("geohashes=boundary","box-percent=0","units=meters"))
@@ -43,19 +43,23 @@ let $center := try {
   cts:point($region)
 }
 
-let $output := object-node {
-        "polygonWkt" : $str,
-        "boundary" : array-node { $boundary-boxes },
-        "interior" : array-node { $interior-boxes },
-        "center" : object-node { "lat":cts:point-latitude($center), "lng":cts:point-longitude($center) }
-        }
-
 return try {
-  let $geom := geojson:to-geojson($region)
-  let $node := object-node {"feature" : object-node { "type":"Feature", "geometry": $geom} }
-  return xdmp:node-insert-child($output, $node/feature)      
+  let $geom := geojson:to-geojson(cts:region($region))
+  return object-node {
+    "feature": object-node { "type":"Feature", "geometry": $geom},
+    "polygonWkt" : $str,
+    "boundary" : array-node { $boundary-boxes },
+    "interior" : array-node { $interior-boxes },
+    "center" : object-node { "lat":cts:point-latitude($center), "lng":cts:point-longitude($center) }
+  }     
 } catch($e) {
-  $output
+  let $x := xdmp:log($e)
+  return object-node {
+    "polygonWkt" : $str,
+    "boundary" : array-node { $boundary-boxes },
+    "interior" : array-node { $interior-boxes },
+    "center" : object-node { "lat":cts:point-latitude($center), "lng":cts:point-longitude($center) }
+  }
 }
 
 
