@@ -53,8 +53,7 @@ return try {
     "center" : object-node { "lat":cts:point-latitude($center), "lng":cts:point-longitude($center) }
   }     
 } catch($e) {
-  let $x := xdmp:log($e)
-  return object-node {
+  object-node {
     "polygonWkt" : $str,
     "boundary" : array-node { $boundary-boxes },
     "interior" : array-node { $interior-boxes },
