@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<!-- 
-Copyright 2016 MarkLogic Corporation 
+<!--
+Copyright 2016 MarkLogic Corporation
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -74,11 +74,17 @@ function drawHashesWkt(hashes) {
   if (hashes.feature) {
     var features = theMap.data.addGeoJson(hashes.feature);
     var latlngs = [];
-    features[0].getGeometry().getAt(0).getArray().forEach(function(a) {
-      latlngs.push({ lat: a.lat(), lng: a.lng() });
-    });
-    drawGeodesics(latlngs);
+    if (hashes.feature.geometry.type == "LineString") {
+      features[0].getGeometry().getArray().forEach(function(a) {
+        latlngs.push({ lat: a.lat(), lng: a.lng() });
+      });
+    } else {
+      features[0].getGeometry().getAt(0).getArray().forEach(function(a) {
+        latlngs.push({ lat: a.lat(), lng: a.lng() });
+      });
+    }
   }
+  drawGeodesics(latlngs);
   drawBoxes(hashes.interior, '#00FF00');
   drawBoxes(hashes.boundary, '#FF0000');
   theMap.panTo(new google.maps.LatLng(hashes.center.lat, hashes.center.lng));
