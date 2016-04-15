@@ -78,13 +78,14 @@ function drawHashesWkt(hashes) {
       features[0].getGeometry().getArray().forEach(function(a) {
         latlngs.push({ lat: a.lat(), lng: a.lng() });
       });
-    } else {
+      drawGeodesicsLS(latlngs);
+    } else if (hashes.feature.geometry.type != "Point") {
       features[0].getGeometry().getAt(0).getArray().forEach(function(a) {
         latlngs.push({ lat: a.lat(), lng: a.lng() });
       });
+      drawGeodesics(latlngs);
     }
   }
-  drawGeodesics(latlngs);
   drawBoxes(hashes.interior, '#00FF00');
   drawBoxes(hashes.boundary, '#FF0000');
   theMap.panTo(new google.maps.LatLng(hashes.center.lat, hashes.center.lng));
@@ -196,6 +197,12 @@ function drawGeodesics(g) {
     drawGeodesic(g[i].lat,g[i].lng,g[i+1].lat,g[i+1].lng);
   }
   drawGeodesic(g[g.length-1].lat,g[g.length-1].lng,g[0].lat,g[0].lng);
+}
+
+function drawGeodesicsLS(g) {
+  for (var i = 0; i < g.length-1; ++i) {
+    drawGeodesic(g[i].lat,g[i].lng,g[i+1].lat,g[i+1].lng);
+  }
 }
 
 function drawGeodesic(lat1, lon1, lat2, lon2) {
