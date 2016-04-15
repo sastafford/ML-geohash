@@ -110,7 +110,7 @@ function fetchHashesLine(line) {
     str = str + xy.lng() + " " + xy.lat() + ",";
   });
   str.replace(/,$/, "") + ")";
-  drawGeodesics(latlngs);
+  drawGeodesicsLS(latlngs);
   fetchHashes(str);
 }
 
