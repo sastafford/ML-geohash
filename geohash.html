@@ -99,7 +99,19 @@ function drawHashesWkt(hashes) {
       center: center,
       radius: radius
     });
-
+  } else if (hashes.polygonWkt.charAt(0) == '[') {
+    //draw the box
+    var rectStr = hashes.polygonWkt.replace(/[\[|\]]/g,"");
+    var rectData = rectStr.split(",").map(Number);
+    var rectangle = new google.maps.Rectangle({
+      map: theMap,
+      bounds: {
+        south: rectData[0],
+        west: rectData[1],
+        north: rectData[2],
+        east: rectData[3]
+      }
+    });
   }
   drawBoxes(hashes.interior, '#00FF00');
   drawBoxes(hashes.boundary, '#FF0000');
