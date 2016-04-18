@@ -85,6 +85,21 @@ function drawHashesWkt(hashes) {
       });
       drawGeodesics(latlngs);
     }
+  } else if (hashes.polygonWkt.charAt(0) == '@') {
+    //draw the circle
+    var circleStr = hashes.polygonWkt.substring(1);
+    var circleData = circleStr.split(/[ |,]/);
+    var radius = Number(circleData[0]) / 0.000621371;
+    var center = {
+      lat: Number(circleData[1]),
+      lng: Number(circleData[2])
+    };
+    var circle = new google.maps.Circle({
+      map: theMap,
+      center: center,
+      radius: radius
+    });
+
   }
   drawBoxes(hashes.interior, '#00FF00');
   drawBoxes(hashes.boundary, '#FF0000');
@@ -115,7 +130,7 @@ function fetchHashesLine(line) {
 }
 
 function fetchHashesCirc(circ) {
-  var radius = circ.getRadius();
+  var radius = circ.getRadius()*0.000621371;
   var center = circ.getCenter();
   var lat = center.lat();
   var lng = center.lng();

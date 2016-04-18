@@ -22,8 +22,8 @@ let $input := xdmp:get-request-body()
 let $region := fn:string($input/region)
 let $geohash-precision := $input/precision
 
-let $boundary-hashes := geo:geohash-encode($region,$geohash-precision,("geohashes=boundary","box-percent=0","units=meters"))
-let $interior-hashes := geo:geohash-encode($region,$geohash-precision,("geohashes=interior","box-percent=0","units=meters"))
+let $boundary-hashes := geo:geohash-encode($region,$geohash-precision,("geohashes=boundary","box-percent=0"))
+let $interior-hashes := geo:geohash-encode($region,$geohash-precision,("geohashes=interior","box-percent=0"))
 
 let $boundary-boxes :=
 for $hash in $boundary-hashes
