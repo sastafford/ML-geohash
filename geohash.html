@@ -80,10 +80,14 @@ function drawHashesWkt(hashes) {
       });
       drawGeodesicsLS(latlngs);
     } else if (hashes.feature.geometry.type != "Point") {
-      features[0].getGeometry().getAt(0).getArray().forEach(function(a) {
-        latlngs.push({ lat: a.lat(), lng: a.lng() });
-      });
-      drawGeodesics(latlngs);
+      var geom = features[0].getGeometry();
+      for (var i = 0; i < geom.getLength(); ++i) {
+        features[0].getGeometry().getAt(i).getArray().forEach(function(a) {
+          latlngs.push({ lat: a.lat(), lng: a.lng() });
+        });
+        drawGeodesics(latlngs);
+        latlngs = [];
+      }
     }
   } else if (hashes.polygonWkt.charAt(0) == '@') {
     //draw the circle
