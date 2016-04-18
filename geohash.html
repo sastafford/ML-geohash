@@ -324,7 +324,7 @@ function toggleLabels() {
 
 <body>
   <div id="text">
-    <textarea rows="4" cols="80" id="wkt_textbox">Input WKT...</textarea>
+    <textarea rows="4" cols="80" id="wkt_textbox" placeholder="Input WKT or string serialized cts:region..."></textarea>
 
     <button type="button" onclick="hashWKT(document.getElementById('wkt_textbox').value);">GeoHash</button>
     <button type="button" id="label_button"  onclick="toggleLabels();">Hide Labels</button>
