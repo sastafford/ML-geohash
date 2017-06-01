@@ -5,6 +5,7 @@ services:
     ports: ["8080:80"]
     volumes:
       - ./src/main/www:/usr/share/nginx/html
+      - ./config/default.conf:/etc/nginx/conf.d/default.conf
   marklogic:
     image: "sastafford/marklogic:latest"
     ports:
