@@ -30,8 +30,8 @@ declare function post(
   ) as document-node()*
 {
 
-  let $region := fn:string($input/region)
-  let $geohash-precision := $input/precision
+  let $region := fn:string($input/node()/region)
+  let $geohash-precision := $input/node()/precision
 
   let $boundary-hashes := geo:geohash-encode($region,$geohash-precision,("geohashes=boundary","box-percent=0"))
   let $interior-hashes := geo:geohash-encode($region,$geohash-precision,("geohashes=interior","box-percent=0"))
@@ -73,6 +73,7 @@ declare function post(
     }
 
   return
+  document {
     try {
       let $geom := geojson:to-geojson(cts:region($region))
       return object-node {
@@ -99,6 +100,7 @@ declare function post(
         }
       }
     }
+  }
 };
 
 declare function delete(
