@@ -177,7 +177,7 @@ function fetchHashes(str) {
   var payload = { precision: precision, region: str };
   $.ajax({
     type: "POST",
-    url: "hash.xqy",
+    url: "/v1/resources/geohash",
     data: JSON.stringify(payload),
     contentType: "application/json",
     dataType: "json",
@@ -190,7 +190,7 @@ function hashWKT(wkt) {
   var payload = { precision: precision, region: wkt }
   $.ajax({
     type: "POST",
-    url: "hash.xqy",
+    url: "/v1/resources/geohash",
     data: JSON.stringify(payload),
     contentType: "application/json",
     dataType: "json",
