@@ -1,0 +1,12 @@
+version: '3'
+services:
+  web:
+    image: "nginx:latest"
+    ports: ["8080:80"]
+    volumes:
+      - ./src/main/www:/usr/share/nginx/html
+  marklogic:
+    image: "sastafford/marklogic:latest"
+    ports:
+      - "7997-8020:7997-8020"
+      - "8200-8201:8200-8201"
